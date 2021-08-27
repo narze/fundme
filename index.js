@@ -1,34 +1,72 @@
 const core = require("@actions/core")
 const github = require("@actions/github")
-const wait = require("./wait")
 
 // most @actions toolkit packages have async methods
 async function run() {
   try {
-    const ms = core.getInput("milliseconds")
-    core.info(`Waiting ${ms} milliseconds ...`)
-
-    core.debug(new Date().toTimeString()) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
-    await wait(parseInt(ms))
-    core.info(new Date().toTimeString())
-
-    core.setOutput("time", new Date().toTimeString())
-
     const githubToken = core.getInput("githubToken")
     const octokit = github.getOctokit(githubToken)
+    const username = core.getInput("username")
 
-    const username = "narze"
+    let filteredRepos = []
 
-    const repos = await octokit.rest.repos.listForUser({
-      username,
+    let page = 1
+    while (true) {
+      const repos = await octokit.request("GET /users/{username}/repos", {
+        username,
+        type: "public",
+        page,
+        per_page: 100,
+        mediaType: {
+          previews: ["mercy"],
+        },
+      })
+
+      console.log({ page, repoCount: repos.data.length })
+
+      page += 1
+
+      if (repos.data.length === 0) {
+        break
+      }
+
+      const data = repos.data.map((repo) => ({
+        full_name: repo.full_name,
+        topics: repo.topics,
+      }))
+
+      filteredRepos = filteredRepos.concat(
+        data.filter((repo) => repo.topics.includes("fundme"))
+      )
+    }
+
+    filteredRepos.forEach(async ({ full_name }) => {
+      const [owner, repo] = full_name.split("/")
+
+      try {
+        await octokit.request("GET /repos/{owner}/{repo}/contents/{path}", {
+          owner,
+          repo,
+          path: ".github/FUNDING.yml",
+        })
+
+        // Do nothing.
+        console.log(`${full_name} already has a funding file.`)
+      } catch (error) {
+        console.log({ error })
+        // Try to create a file
+
+        await octokit.request("PUT /repos/{owner}/{repo}/contents/{path}", {
+          owner,
+          repo,
+          path: ".github/FUNDING.yml",
+          message: "Create FUNDING.yml",
+          content: Buffer.from("ko_fi: narze").toString("base64"),
+        })
+
+        console.log(`Created funding file for ${owner}/${repo}`)
+      }
     })
-
-    const data = repos.data.map((repo) => ({
-      full_name: repo.full_name,
-      topics: repo.topics,
-    }))
-
-    console.log({ data })
   } catch (error) {
     core.setFailed(error.message)
   }

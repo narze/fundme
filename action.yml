@@ -1,16 +1,14 @@
-name: "Wait"
-description: "Wait a designated number of milliseconds"
+name: "Fundme"
+description: "Create FUNDING.yml"
 inputs:
-  milliseconds: # id of input
-    description: "number of milliseconds to wait"
-    required: true
-    default: "1000"
   githubToken:
     description: "Your Github Token (Use secrets.GITHUB_TOKEN)"
     required: true
-outputs:
-  time: # output will be available to future steps
-    description: "The message to output"
+  username:
+    description: "Your Github Username"
+    required: true
+    default: "narze"
+outputs: {}
 runs:
   using: "node12"
   main: "dist/index.js"
