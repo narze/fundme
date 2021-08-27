@@ -19,6 +19,12 @@ async function run() {
 
     const username = "narze"
 
+    const repos = await octokit.rest.repos.listForUser({
+      username,
+    })
+
+    console.log({ repos })
+
     core.info(
       await octokit.rest.repos.listForUser({
         username,
