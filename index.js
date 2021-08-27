@@ -23,13 +23,12 @@ async function run() {
       username,
     })
 
-    console.log({ repos })
+    const data = repos.data.map((repo) => ({
+      full_name: repo.full_name,
+      topics: repo.topics,
+    }))
 
-    core.info(
-      await octokit.rest.repos.listForUser({
-        username,
-      })
-    )
+    console.log({ data })
   } catch (error) {
     core.setFailed(error.message)
   }
