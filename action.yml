@@ -6,7 +6,7 @@ inputs:
     required: true
     default: "1000"
   githubToken:
-    description: "Your Github Token (Use ${{ secrets.GITHUB_TOKEN }})"
+    description: "Your Github Token (Use secrets.GITHUB_TOKEN)"
     required: true
 outputs:
   time: # output will be available to future steps
