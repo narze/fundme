@@ -26,5 +26,5 @@ jobs:
       - run: npm ci
       - uses: ./
         with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          githubToken: ${{ secrets.GITHUBTOKEN }}
           username: narze

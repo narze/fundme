@@ -2,7 +2,7 @@ name: "Fundme"
 description: "Create FUNDING.yml"
 inputs:
   githubToken:
-    description: "Your Github Token (Use secrets.GITHUB_TOKEN)"
+    description: "Your Github Token which has repo permission"
     required: true
   username:
     description: "Your Github Username"
