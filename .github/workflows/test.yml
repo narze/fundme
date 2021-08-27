@@ -8,18 +8,19 @@ on:
 
 jobs:
   # unit tests
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: npm ci
-      - run: npm test
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - run: npm ci
+  #     - run: npm test
 
   # test action works running from the graph
   run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: npm ci
       - uses: ./
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
