@@ -7,7 +7,6 @@ inputs:
   username:
     description: "Your Github Username"
     required: true
-    default: "narze"
 outputs: {}
 runs:
   using: "node12"

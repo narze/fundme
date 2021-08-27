@@ -27,4 +27,4 @@ jobs:
       - uses: ./
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-          milliseconds: 1000
+          username: narze

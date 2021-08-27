@@ -61,7 +61,7 @@ async function run() {
           repo,
           path: ".github/FUNDING.yml",
           message: "Create FUNDING.yml",
-          content: Buffer.from("ko_fi: narze").toString("base64"),
+          content: Buffer.from(`ko_fi: ${username}`).toString("base64"),
         })
 
         console.log(`Created funding file for ${owner}/${repo}`)
