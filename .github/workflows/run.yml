@@ -1,5 +1,9 @@
-name: "units-test"
+name: "Run"
+
 on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"
   pull_request:
   push:
     branches:
@@ -15,7 +19,6 @@ jobs:
   #     - run: npm ci
   #     - run: npm test
 
-  # test action works running from the graph
   run:
     runs-on: ubuntu-latest
     steps:
