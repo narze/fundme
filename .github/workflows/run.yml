@@ -30,3 +30,7 @@ jobs:
         with:
           githubToken: ${{ secrets.GITHUBTOKEN }}
           username: narze
+      - uses: ./
+        with:
+          githubToken: ${{ secrets.GITHUBTOKEN }}
+          username: Manoonchai
