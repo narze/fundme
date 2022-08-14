@@ -5,8 +5,10 @@ const github = require("@actions/github")
 async function run() {
   try {
     const githubToken = core.getInput("githubToken")
+
     const octokit = github.getOctokit(githubToken)
     const username = core.getInput("username")
+    console.log({ githubToken, username })
 
     let filteredRepos = []
 
@@ -44,14 +46,37 @@ async function run() {
       const [owner, repo] = full_name.split("/")
 
       try {
-        await octokit.request("GET /repos/{owner}/{repo}/contents/{path}", {
-          owner,
-          repo,
-          path: ".github/FUNDING.yml",
-        })
+        const file = await octokit.request(
+          "GET /repos/{owner}/{repo}/contents/{path}",
+          {
+            owner,
+            repo,
+            path: ".github/FUNDING.yml",
+          }
+        )
 
-        // Do nothing.
-        console.log(`${full_name} already has a funding file.`)
+        const content = Buffer.from(
+          file.data.content.trim(),
+          "base64"
+        ).toString()
+
+        if (content.includes("github: narze")) {
+          console.log(
+            `${full_name} already has a funding file with github sponsor.`
+          )
+        } else {
+          // Update the file
+          await octokit.request("PUT /repos/{owner}/{repo}/contents/{path}", {
+            owner,
+            repo,
+            path: ".github/FUNDING.yml",
+            message: "Update FUNDING.yml",
+            content: Buffer.from(`github: narze\nko_fi: narze`).toString(
+              "base64"
+            ),
+            sha: file.data.sha,
+          })
+        }
       } catch (error) {
         console.log({ error })
         // Try to create a file
@@ -61,7 +86,9 @@ async function run() {
           repo,
           path: ".github/FUNDING.yml",
           message: "Create FUNDING.yml",
-          content: Buffer.from(`ko_fi: narze`).toString("base64"),
+          content: Buffer.from(`github: narze\nko_fi: narze`).toString(
+            "base64"
+          ),
         })
 
         console.log(`Created funding file for ${owner}/${repo}`)
